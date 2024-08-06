@@ -1,6 +1,6 @@
-#define BLYNK_TEMPLATE_ID "TMPL6Cja08zAC"
-#define BLYNK_TEMPLATE_NAME "AC"
-#define BLYNK_AUTH_TOKEN "yN4W815O-0agTay5exvztLaVJL2ZHTX0"
+#define BLYNK_TEMPLATE_ID "id-template-kamu"
+#define BLYNK_TEMPLATE_NAME "nama-template-kamu"
+#define BLYNK_AUTH_TOKEN "auth-token-kamu"
 
 #include <Arduino.h>
 #include <IRremoteESP8266.h>
@@ -9,11 +9,11 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
-char ssid[] = "PANGKALAN UTAMA";       
-char pass[] = "sersanadi";
+char ssid[] = "ssid-wifi";       
+char pass[] = "password-wifi";
 
 //Pin IRLed TX
-const uint16_t kIrLed = 4; // Menggunakan pin D5 (GPIO14)
+const uint16_t kIrLed = 4; //(sesuaikan)
 
 int pushMode = 0;
 int pushFan = 0;
@@ -86,68 +86,6 @@ BLYNK_WRITE(V8)
   Serial.println(temp);
 }
 
-BLYNK_WRITE(V2)
-{
-  pushMode = param.asInt();
-  if(pushMode == 1)
-  {
-    toggleMode++;
-    if(toggleMode > 4) toggleMode = 0;
-
-    switch(toggleMode) {
-      case 0:
-        ac.setMode(kPanasonicAcAuto);
-        break;
-      case 1:
-        ac.setMode(kPanasonicAcCool);
-        break;
-      case 2:
-        ac.setMode(kPanasonicAcDry);
-        break;
-      case 3:
-        ac.setMode(kPanasonicAcFan);
-        break;
-      case 4:
-        ac.setMode(kPanasonicAcHeat);
-        break;
-    }
-    ac.send();
-    Serial.print("Mode changed: "); // Menampilkan mode
-    Serial.println(toggleMode);
-  }
-}
-
-BLYNK_WRITE(V3)
-{
-  pushFan = param.asInt();
-  if(pushFan == 1)
-  {
-    toggleFan++;
-    if(toggleFan > 5) toggleFan = 0;
-
-    switch(toggleFan) {
-      case 0:
-        ac.setFan(kPanasonicAcFanAuto);
-        break;
-      case 1:
-        ac.setFan(kPanasonicAcFanLow);
-        break;
-      case 2:
-        ac.setFan(kPanasonicAcFanMed);
-        break;
-      case 3:
-        ac.setFan(kPanasonicAcFanHigh);
-        break;
-      case 4:
-        ac.setFan(kPanasonicAcFanMax);
-        break;
-    }
-    ac.send();
-    Serial.print("Fan Speed: "); // Menampilkan kecepatan kipas
-    Serial.println(toggleFan);
-  }
-}
-
 BLYNK_WRITE(V4)
 {
   pushSwing = param.asInt();
@@ -177,21 +115,6 @@ BLYNK_WRITE(V0)
   }
 }
 
-BLYNK_WRITE(V9)
-{
-  toggleECO = param.asInt();
-  if(toggleECO == 1)
-  {
-    irsend.sendRaw(rawEcoOn, sizeof(rawEcoOn) / sizeof(rawEcoOn[0]), 38);
-    Serial.println("ECO Mode: ON"); // Menampilkan status ECO Mode
-  }
-  else
-  {
-    irsend.sendRaw(rawEcoOff, sizeof(rawEcoOff) / sizeof(rawEcoOff[0]), 38);
-    Serial.println("ECO Mode: OFF"); // Menampilkan status ECO Mode
-  }
-}
-
 void setup()
 {
   Serial.begin(9600);
@@ -203,18 +126,9 @@ void setup()
   ac.setFan(kPanasonicAcFanAuto);
   ac.send();
   Serial.println("Setup complete!"); // Menampilkan bahwa setup selesai
-  // // timer.setInterval(1000L, []()
-  // {
-  //   Blynk.virtualWrite(V1, temp);
-  //   Blynk.virtualWrite(V2, toggleMode);
-  //   Blynk.virtualWrite(V3, toggleFan);
-  //   Blynk.virtualWrite(V4, toggleSwing);
-  //   Blynk.virtualWrite(V5, togglePower);
-  // });
 }
 
 void loop()
 {
   Blynk.run();
-  // timer.run();
 }
